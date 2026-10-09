@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#100b1d">
+<meta name="description" content="黒×紫のスマホ向けテトリス風ミニゲーム">
+<link rel="manifest" href="manifest.webmanifest">
+<title>VOID TETRIS</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0812;--panel:#151020;--line:#332449;--purple:#b58cff;--pink:#f09aff;--text:#f7efff;--muted:#a99ab9}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(ellipse at 50% -10%,#28163d 0,#0b0812 56%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;overscroll-behavior:none}body{padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom);touch-action:pan-y}
+.app{width:min(100%,520px);margin:0 auto;padding:14px 0 22px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.brand{font-weight:950;letter-spacing:.14em;font-size:clamp(20px,5vw,27px)}.brand span{color:var(--purple)}.sub{font-size:10px;color:var(--muted);letter-spacing:.18em;margin-top:3px}.iconbtn,.btn{border:1px solid #45315e;background:#1a1228;color:var(--text);border-radius:13px;padding:10px 13px;font-weight:750;cursor:pointer}.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}.stat,.sidebox,.boardwrap,.ranking{background:linear-gradient(145deg,#191225,#100c19);border:1px solid var(--line);border-radius:15px}.stat{padding:9px 10px}.label{font-size:10px;color:var(--muted);letter-spacing:.12em}.num{font-size:clamp(19px,5vw,26px);font-weight:850;font-variant-numeric:tabular-nums;margin-top:2px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:9px;align-items:start}.boardwrap{padding:7px;position:relative;overflow:hidden}.board{display:block;width:100%;height:auto;background:#0a0812;border-radius:7px;touch-action:none}.side{display:flex;flex-direction:column;gap:9px}.sidebox{padding:8px}.sidehead{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-bottom:5px}.mini{width:100%;display:block}.holdempty{height:54px;display:grid;place-items:center;color:#62536f;font-size:12px}.hint{font-size:10px;line-height:1.45;color:var(--muted);margin-top:4px}.overlay{position:absolute;inset:7px;display:flex;align-items:center;justify-content:center;background:#090611d9;border-radius:7px;text-align:center;padding:20px}.overlay[hidden]{display:none}.overlaycard{max-width:230px}.overlay h2{font-size:25px;margin:0 0 8px}.overlay p{font-size:13px;color:#c6b6d8;line-height:1.55}.primary{background:linear-gradient(120deg,#8d55dc,#c06df2);border:0;color:white;border-radius:14px;padding:13px 20px;font-weight:900;box-shadow:0 5px 22px #8e49d744;cursor:pointer}.controls{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:11px;touch-action:manipulation}.ctrl{height:54px;border:1px solid #4c3568;border-radius:15px;background:linear-gradient(145deg,#21152f,#15101f);color:#f3e5ff;font-size:22px;font-weight:800;box-shadow:inset 0 1px #ffffff08;touch-action:manipulation;user-select:none;-webkit-user-select:none}.ctrl small{display:block;font-size:9px;color:#b6a0cb;line-height:1}.ctrl:active,.btn:active{background:#493064;transform:scale(.97)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.actions .btn{padding:11px 6px}.ranking{margin-top:12px;padding:12px}.rankhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.rankhead strong{letter-spacing:.08em}.ranklist{margin:0;padding:0;list-style:none}.ranklist li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid #2c203b;font-size:13px}.ranklist .empty{color:var(--muted);justify-content:center}.foot{color:#776889;text-align:center;font-size:10px;margin-top:12px}.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#2a1b3b;border:1px solid #74519a;padding:10px 15px;border-radius:99px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}.toast.show{opacity:1}
+@media(min-width:440px){.layout{grid-template-columns:minmax(0,1fr) 105px}.sidebox{padding:10px}.ctrl{height:60px}}@media(max-height:700px){.app{padding-top:7px}.controls{margin-top:7px}.ctrl{height:47px}.ranking{margin-top:8px}}
+
+.musicbar,.custombar{display:flex;align-items:center;gap:9px;background:#151020;border:1px solid #332449;border-radius:14px;padding:9px 10px;margin:0 0 9px;min-width:0}
+.musicicon{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#342047;color:#e0baff;font-size:20px;flex-shrink:0}
+.musictext{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}.musictext b{font-size:11px;letter-spacing:.1em}.musictext span{font-size:10px;color:#a99ab9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.custombar label{font-size:11px;color:#bda9d0}.custombar select{min-width:0;flex:1;background:#21152f;color:#f7efff;border:1px solid #45315e;border-radius:9px;padding:8px;font-size:11px}.custombar input[type=color]{width:30px;height:30px;border:0;background:none;padding:0}.custombar .iconbtn{font-size:10px;padding:8px}
+.dpad{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:11px;padding:10px;background:#110c1b;border:1px solid #30203f;border-radius:18px;touch-action:manipulation}
+.dpadleft{display:flex;gap:9px}.dpadright{display:flex;gap:7px}.dpad .ctrl{width:54px;height:56px;font-size:20px;border-radius:14px}.dpad .ctrl small{font-size:9px}.dpad .dropctrl{background:linear-gradient(145deg,#50306e,#281738);border-color:#8b5cb1}
+body[data-bg="midnight"]{background:radial-gradient(ellipse at 50% -10%,#172e55 0,#070b16 56%)}body[data-bg="rose"]{background:radial-gradient(ellipse at 50% -10%,#4c183d 0,#120812 56%)}body[data-bg="forest"]{background:radial-gradient(ellipse at 50% -10%,#12433b 0,#07120f 56%)}body[data-bg="custom"]{background:radial-gradient(ellipse at 50% -10%,var(--custom-bg,#302040) 0,#090711 70%)}body[data-bg="image"]{background-size:cover;background-position:center;background-attachment:fixed}
+@media(max-width:390px){.musicbar{gap:6px}.musicbar .iconbtn{padding:8px;font-size:10px}.dpad{gap:5px;padding:7px}.dpad .ctrl{width:47px;height:51px}.custombar{gap:5px}.custombar .iconbtn{padding:7px 6px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top"><div><div class="brand">VOID <span>TETRIS</span></div><div class="sub">A LITTLE BREAK IN THE VOID</div></div><button class="iconbtn" id="soundBtn" aria-label="効果音切り替え">♪ ON</button></header>
+<section class="musicbar"><div class="musicicon">♫</div><div class="musictext"><b id="musicTitle">NOW PLAYING</b><span id="musicArtist">音楽情報は対応ブラウザ内の再生のみ表示できます</span></div><button class="iconbtn" id="musicBtn">音楽設定</button></section>
+<section class="custombar"><label for="bgSelect">背景</label><select id="bgSelect"><option value="void">VOID PURPLE</option><option value="midnight">MIDNIGHT BLUE</option><option value="rose">DARK ROSE</option><option value="forest">NEON FOREST</option><option value="custom">好きな色</option></select><input type="color" id="bgColor" value="#0b0812" aria-label="背景色を選ぶ"><button class="iconbtn" id="bgUploadBtn">画像を設定</button><input type="file" id="bgUpload" accept="image/*" hidden></section>
+<section class="stats">
+<div class="stat"><div class="label">SCORE</div><div class="num" id="score">0</div></div>
+<div class="stat"><div class="label">BEST</div><div class="num" id="best">0</div></div>
+<div class="stat"><div class="label">LINES / LV</div><div class="num"><span id="lines">0</span><span style="color:#69577c"> / </span><span id="level">1</span></div></div>
+</section>
+<section class="layout">
+<div class="boardwrap"><canvas class="board" id="board" width="300" height="600" aria-label="ゲーム盤"></canvas>
+<div class="overlay" id="overlay"><div class="overlaycard"><div style="font-size:36px;margin-bottom:7px">✦</div><h2 id="overlayTitle">READY?</h2><p id="overlayText">ブロックをそろえて、ラインを消そう。<br>短い休憩に、ひと勝負。</p><button class="primary" id="startBtn">PLAY GAME</button></div></div></div>
+<aside class="side">
+<div class="sidebox"><div class="sidehead">HOLD</div><canvas class="mini" id="hold" width="100" height="72"></canvas><div class="hint">ボタンで交換</div></div>
+<div class="sidebox"><div class="sidehead">NEXT</div><canvas class="mini" id="next" width="100" height="220"></canvas></div>
+<div class="sidebox"><div class="sidehead">CONTROLS</div><div class="hint">← → 移動<br>↑ 回転<br>↓ 落下<br>SPACE 一気に落下<br>P 一時停止</div></div>
+</aside>
+</section>
+<div class="controls">
+<button class="ctrl" data-act="left" aria-label="左へ">←<small>LEFT</small></button>
+<button class="ctrl" data-act="rotate" aria-label="回転">↻<small>ROTATE</small></button>
+<button class="ctrl" data-act="right" aria-label="右へ">→<small>RIGHT</small></button>
+<button class="ctrl" data-act="down" aria-label="下へ">↓<small>DOWN</small></button>
+<button class="ctrl" data-act="drop" aria-label="一気に落下">⇊<small>DROP</small></button>
+</div>
+<div class="actions"><button class="btn" id="holdBtn">◇ HOLD</button><button class="btn" id="pauseBtn">Ⅱ PAUSE</button></div>
+<section class="ranking"><div class="rankhead"><strong>✧ HALL OF FAME</strong><button class="iconbtn" id="clearRanks" style="font-size:10px;padding:6px 8px">RESET</button></div><ol class="ranklist" id="ranklist"><li class="empty">まだ記録がないよ。最初のスコアを刻もう！</li></ol></section>
+<section class="ranking online"><div class="rankhead"><strong>⌁ ONLINE BATTLE</strong><span class="label" id="onlineStatus">未接続</span></div><p class="hint">同じサイトの人と競うオンラインランキング。Firebase設定を入れると共有ランキングが有効になります。</p><button class="btn" id="onlineSetupBtn">オンライン設定</button></section>
+<div class="foot">VOID TETRIS · ローカル記録はこの端末に保存されます</div>
+</main><div class="toast" id="toast"></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id), canvas=$('board'),ctx=canvas.getContext('2d');
+const W=10,H=20, colors={I:'#69e5ff',J:'#8a7dff',L:'#ffad66',O:'#ffe17a',S:'#79f0b0',T:'#d38aff',Z:'#ff78c8'};
+const shapes={
+ I:[[1,1,1,1]],J:[[1,0,0],[1,1,1]],L:[[0,0,1],[1,1,1]],O:[[1,1],[1,1]],
+ S:[[0,1,1],[1,1,0]],T:[[0,1,0],[1,1,1]],Z:[[1,1,0],[0,1,1]]
+};
+let board,cur,nextQueue,holdPiece,holdUsed,score,lines,level,active,paused,over,lastTime=0,dropCounter=0,sound=true,audio=null;
+const keyBest='voidtetris_best_v1',keyRanks='voidtetris_ranks_v1';
+function randPiece(){let bag=Object.keys(shapes);for(let i=bag.length-1;i>0;i--){let j=Math.random()*(i+1)|0;[bag[i],bag[j]]=[bag[j],bag[i]]}return bag}
+function fillQueue(){while(nextQueue.length<8)nextQueue.push(...randPiece())}
+function cloneShape(type){return shapes[type].map(r=>r.slice())}
+function newPiece(type){return {type,shape:cloneShape(type),x:Math.floor((W-cloneShape(type)[0].length)/2),y:-1}}
+function init(){board=Array.from({length:H},()=>Array(W).fill(null));nextQueue=[];fillQueue();cur=newPiece(nextQueue.shift());fillQueue();holdPiece=null;holdUsed=false;score=0;lines=0;level=1;active=true;paused=false;over=false;lastTime=0;dropCounter=0;$('overlay').hidden=true;$('pauseBtn').textContent='Ⅱ PAUSE';updateStats();draw();drawNext();drawHold();toast('GOOD LUCK ✦')}
+function rotate(m){return m[0].map((_,i)=>m.map(row=>row[i]).reverse())}
+function collides(p,dx=0,dy=0,shape=p.shape){for(let y=0;y<shape.length;y++)for(let x=0;x<shape[y].length;x++)if(shape[y][x]){let nx=p.x+x+dx,ny=p.y+y+dy;if(nx<0||nx>=W||ny>=H)return true;if(ny>=0&&board[ny][nx])return true}return false}
+function merge(){cur.shape.forEach((row,y)=>row.forEach((v,x)=>{if(v&&cur.y+y>=0)board[cur.y+y][cur.x+x]=cur.type}));let n=0;for(let y=H-1;y>=0;y--){if(board[y].every(Boolean)){board.splice(y,1);board.unshift(Array(W).fill(null));n++;y++}}if(n){lines+=n;score+=[0,100,300,500,800][n]*level;level=Math.floor(lines/10)+1;beep(n===4?880:620,.09);vibrate([20,25,35]);}holdUsed=false;cur=newPiece(nextQueue.shift());fillQueue();drawNext();if(collides(cur)){finish()}updateStats()}
+function step(){if(!collides(cur,0,1))cur.y++;else merge();draw()}
+function move(dx,dy=0){if(!active||paused||over)return;if(!collides(cur,dx,dy)){cur.x+=dx;cur.y+=dy;if(dy)score+=1;draw();updateStats();if(dx)beep(260,.018)}}
+function turn(){if(!active||paused||over)return;const s=rotate(cur.shape);for(const k of [0,-1,1,-2,2])if(!collides(cur,k,0,s)){cur.shape=s;cur.x+=k;draw();beep(400,.03);return}}
+function hardDrop(){if(!active||paused||over)return;let n=0;while(!collides(cur,0,1)){cur.y++;n++}score+=n*2;beep(180,.07);merge();draw();updateStats()}
+function hold(){if(!active||paused||over||holdUsed)return;const t=cur.type;if(!holdPiece){holdPiece=t;cur=newPiece(nextQueue.shift());fillQueue();drawNext()}else{cur=newPiece(holdPiece);holdPiece=t}holdUsed=true;drawHold();draw();beep(350,.04)}
+function block(c,x,y,size,type,ghost=false){c.globalAlpha=ghost?.22:1;c.fillStyle=colors[type];c.fillRect(x+1,y+1,size-2,size-2);if(!ghost){c.fillStyle='#ffffff25';c.fillRect(x+3,y+3,size-6,Math.max(2,size*.13));c.strokeStyle='#ffffff42';c.lineWidth=1;c.strokeRect(x+1.5,y+1.5,size-3,size-3)}c.globalAlpha=1}
+function draw(){const cw=canvas.width/W,ch=canvas.height/H;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#0a0812';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.strokeStyle='#21172e';ctx.lineWidth=1;for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*cw,0);ctx.lineTo(x*cw,canvas.height);ctx.stroke()}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*ch);ctx.lineTo(canvas.width,y*ch);ctx.stroke()}board.forEach((row,y)=>row.forEach((v,x)=>{if(v)block(ctx,x*cw,y*ch,cw,v)}));if(cur&&!over){let gy=cur.y;while(!collides({...cur,y:gy},0,1))gy++;cur.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&gy+y>=0)block(ctx,(cur.x+x)*cw,(gy+y)*ch,cw,cur.type,true)}));cur.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&cur.y+y>=0)block(ctx,(cur.x+x)*cw,(cur.y+y)*ch,cw,cur.type)}))}}
+function drawMini(c,type,offsetY=0){const g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);if(!type)return;const s=17,shape=shapes[type],width=shape[0].length*s,height=shape.length*s,ox=(c.width-width)/2,oy=(c.height-height)/2+offsetY;shape.forEach((r,y)=>r.forEach((v,x)=>{if(v)block(g,ox+x*s,oy+y*s,s,type)}))}
+function drawHold(){drawMini($('hold'),holdPiece)}
+function drawNext(){const c=$('next'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);nextQueue.slice(0,4).forEach((t,i)=>{const s=14,shape=shapes[t],ox=(c.width-shape[0].length*s)/2,oy=i*53+(48-shape.length*s)/2;shape.forEach((r,y)=>r.forEach((v,x)=>{if(v)block(g,ox+x*s,oy+y*s,s,t)}))})}
+function updateStats(){$('score').textContent=score.toLocaleString();$('lines').textContent=lines;$('level').textContent=level;$('best').textContent=Math.max(score,loadBest()).toLocaleString()}
+function loadBest(){try{return Number(localStorage.getItem(keyBest)||0)}catch(e){return 0}}
+function saveRank(){let arr=[];try{arr=JSON.parse(localStorage.getItem(keyRanks)||'[]')}catch(e){}arr.push({score,date:new Date().toLocaleDateString('ja-JP')});arr.sort((a,b)=>b.score-a.score);arr=arr.slice(0,5);try{localStorage.setItem(keyRanks,JSON.stringify(arr));localStorage.setItem(keyBest,String(Math.max(score,loadBest())))}catch(e){}renderRanks()}
+function renderRanks(){let arr=[];try{arr=JSON.parse(localStorage.getItem(keyRanks)||'[]')}catch(e){}const el=$('ranklist');el.innerHTML='';if(!arr.length){el.innerHTML='<li class="empty">まだ記録がないよ。最初のスコアを刻もう！</li>';return}arr.forEach((r,i)=>{const li=document.createElement('li');li.innerHTML='<span><span style="color:#b58cff;font-weight:800">#'+(i+1)+'</span>　'+r.date+'</span><strong>'+Number(r.score).toLocaleString()+'</strong>';el.appendChild(li)})}
+function finish(){over=true;active=false;saveRank();$('overlay').hidden=false;$('overlayTitle').textContent='GAME OVER';$('overlayText').innerHTML='SCORE <b style="color:#d8b4ff">'+score.toLocaleString()+'</b><br>ライン '+lines+' 本。もう一回いく？';$('startBtn').textContent='PLAY AGAIN';beep(110,.25);vibrate([60,50,90]);draw()}
+function pause(){if(over||!active)return;paused=!paused;$('pauseBtn').textContent=paused?'▶ RESUME':'Ⅱ PAUSE';$('overlay').hidden=!paused;if(paused){$('overlayTitle').textContent='PAUSED';$('overlayText').textContent='ひと休み。準備ができたら再開しよう。';$('startBtn').textContent='RESUME'}else lastTime=0}
+function beep(freq=440,dur=.04){if(!sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.035,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch(e){}}
+function vibrate(pattern){try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}}
+let toastTimer;function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1200)}
+function loop(t=0){const dt=t-lastTime;lastTime=t;if(active&&!paused&&!over){dropCounter+=dt;if(dropCounter>Math.max(90,780-(level-1)*55)){step();dropCounter=0}}requestAnimationFrame(loop)}
+document.querySelectorAll('[data-act]').forEach(b=>{let interval,delay;const act=b.dataset.act;const run=()=>{if(act==='left')move(-1);else if(act==='right')move(1);else if(act==='down')move(0,1);else if(act==='rotate')turn();else if(act==='drop')hardDrop()};b.addEventListener('pointerdown',e=>{e.preventDefault();run();if(['left','right','down'].includes(act)){delay=setTimeout(()=>{interval=setInterval(run,act==='down'?65:105)},240)}});['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,()=>{clearTimeout(delay);clearInterval(interval)}))});
+$('startBtn').onclick=()=>{if(paused){pause();return}init()};
+$('holdBtn').onclick=hold;$('pauseBtn').onclick=pause;
+$('soundBtn').onclick=()=>{sound=!sound;$('soundBtn').textContent=sound?'♪ ON':'♪ OFF';if(sound)beep()};
+$('clearRanks').onclick=()=>{if(confirm('ハイスコアランキングを消去する？')){try{localStorage.removeItem(keyRanks);localStorage.removeItem(keyBest)}catch(e){}renderRanks();updateStats();toast('記録をリセットしました')}};
+document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft')move(-1);else if(e.key==='ArrowRight')move(1);else if(e.key==='ArrowDown')move(0,1);else if(e.key==='ArrowUp'||e.key==='x'||e.key==='X')turn();else if(e.key===' ')hardDrop();else if(e.key==='c'||e.key==='C')hold();else if(e.key==='p'||e.key==='P')pause()});
+let sx=0,sy=0,st=0;canvas.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;st=Date.now()},{passive:true});canvas.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)<18&&Math.abs(dy)<18){turn()}else if(Math.abs(dx)>Math.abs(dy)){move(dx>0?1:-1)}else if(dy>40){if(Date.now()-st<180)hardDrop();else move(0,1)}},{passive:true});
+
+// Background customizer
+const bgSelect=$('bgSelect'), bgColor=$('bgColor'), bgUpload=$('bgUpload');
+function setBg(v){document.body.dataset.bg=v;try{localStorage.setItem('void_bg',v)}catch(e){}}
+try{const saved=localStorage.getItem('void_bg');if(saved&&['void','midnight','rose','forest','custom','image'].includes(saved)){bgSelect.value=['void','midnight','rose','forest','custom'].includes(saved)?saved:'void';setBg(saved)}}catch(e){}
+bgSelect.addEventListener('change',()=>{if(bgSelect.value==='custom'){document.body.style.setProperty('--custom-bg',bgColor.value)}setBg(bgSelect.value)});
+bgColor.addEventListener('input',()=>{document.body.style.setProperty('--custom-bg',bgColor.value);bgSelect.value='custom';setBg('custom')});
+$('bgUploadBtn').onclick=()=>bgUpload.click();
+bgUpload.addEventListener('change',()=>{const f=bgUpload.files&&bgUpload.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{document.body.style.backgroundImage='linear-gradient(#090711aa,#090711aa),url('+reader.result+')';document.body.dataset.bg='image';try{localStorage.setItem('void_bg_image',reader.result);localStorage.setItem('void_bg','image')}catch(e){toast('画像が大きすぎて保存できないかも')}};reader.readAsDataURL(f)});
+try{const img=localStorage.getItem('void_bg_image');if(img&&localStorage.getItem('void_bg')==='image'){document.body.style.backgroundImage='linear-gradient(#090711aa,#090711aa),url('+img+')';document.body.dataset.bg='image'}}catch(e){}
+// Music: browsers cannot read playback from another app (e.g. Amazon Music). Can display metadata for audio played by this page only.
+$('musicBtn').onclick=()=>{const name=prompt('このWebアプリ内で再生する曲の表示名（外部アプリの音楽は取得できません）');if(name){$('musicTitle').textContent=name;$('musicArtist').textContent='Webアプリ内の表示ラベル';try{navigator.mediaSession.metadata=new MediaMetadata({title:name,artist:'VOID TETRIS',album:'Now Playing'})}catch(e){}}else toast('Amazon Musicなど他アプリの曲情報はブラウザから取得できません')};
+// Optional Firebase Realtime Database online leaderboard
+const dialog=$('onlineDialog'), cfgBox=$('firebaseConfig');
+$('onlineSetupBtn').onclick=()=>{try{cfgBox.value=localStorage.getItem('void_firebase_config')||''}catch(e){}dialog.showModal()};
+$('closeOnline').onclick=()=>dialog.close();
+$('saveFirebase').onclick=async()=>{
+ let cfg;try{cfg=JSON.parse(cfgBox.value)}catch(e){toast('JSONの形式を確認してね');return}
+ if(!cfg.databaseURL||!cfg.apiKey||!cfg.projectId){toast('databaseURL・apiKey・projectIdが必要です');return}
+ try{localStorage.setItem('void_firebase_config',JSON.stringify(cfg))}catch(e){}
+ // Firebase SDK is loaded only after user provides their own project configuration.
+ try{
+  if(!window.firebase){await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js';s.onload=resolve;s.onerror=reject;document.head.appendChild(s)})}
+  const app=window.firebase.apps.length?window.firebase.app():window.firebase.initializeApp(cfg);
+  const db=window.firebase.database(app);window.voidDb=db;
+  $('onlineStatus').textContent='接続済み';dialog.close();toast('オンラインランキングに接続しました');
+  renderOnline();
+ }catch(e){$('onlineStatus').textContent='設定確認';toast('接続できません。Firebase設定とDatabaseルールを確認してね')}
+};
+function renderOnline(){if(!window.voidDb)return;window.voidDb.ref('voidTetris/scores').orderByChild('score').limitToLast(10).on('value',snap=>{let vals=[];snap.forEach(c=>vals.push(c.val()));vals.sort((a,b)=>b.score-a.score);$('onlineStatus').textContent='ONLINE';let box=document.getElementById('onlineList');if(!box){box=document.createElement('ol');box.id='onlineList';box.className='ranklist';document.querySelector('.online').appendChild(box)}box.innerHTML='';if(!vals.length){box.innerHTML='<li class="empty">オンライン記録はまだありません</li>';return}vals.forEach((r,i)=>{const li=document.createElement('li');li.innerHTML='<span>#'+(i+1)+'　'+String(r.name||'PLAYER').replace(/[&<>"]/g,'')+'</span><strong>'+Number(r.score||0).toLocaleString()+'</strong>';box.appendChild(li)})})}
+const oldSaveRank=saveRank;
+saveRank=function(){oldSaveRank();if(window.voidDb){const name=(prompt('オンラインランキングに表示する名前（空欄でPLAYER）')||'PLAYER').slice(0,16);window.voidDb.ref('voidTetris/scores').push({name,score,lines,date:Date.now()}).then(renderOnline).catch(()=>toast('オンライン送信に失敗しました'))}}
+
+renderRanks();updateStats();draw();drawNext();drawHold();requestAnimationFrame(loop);
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
+</script>
+</body></html>

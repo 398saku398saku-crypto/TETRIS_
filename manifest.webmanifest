@@ -1,0 +1,12 @@
+{
+  "name": "VOID TETRIS",
+  "short_name": "VOID TETRIS",
+  "description": "黒×紫のスマホ向けテトリス風ミニゲーム",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0812",
+  "theme_color": "#100b1d",
+  "icons": []
+}
